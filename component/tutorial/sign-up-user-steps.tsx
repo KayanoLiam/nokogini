@@ -6,7 +6,7 @@ export function SignUpUserSteps() {
   return (
     <ol className="flex flex-col gap-6">
       {process.env.VERCEL_ENV === "preview" ||
-      process.env.VERCEL_ENV === "production" ? (
+        process.env.VERCEL_ENV === "production" ? (
         <TutorialStep title="Set up redirect urls">
           <p>It looks like this App is hosted on Vercel.</p>
           <p className="mt-4">
@@ -73,17 +73,16 @@ export function SignUpUserSteps() {
           </Link>
         </TutorialStep>
       ) : null}
-      <TutorialStep title="Sign up your first user">
+      <TutorialStep title="Register your account and follow our guidelines for chatting.">
         <p>
-          Head over to the{" "}
+          Before{" "}
           <Link
             href="auth/sign-up"
             className="font-bold hover:underline text-foreground/80"
           >
             Sign up
           </Link>{" "}
-          page and sign up your first user. It&apos;s okay if this is just you
-          for now. Your awesome idea will have plenty of users later!
+          you can check our guidelines elsewhere. However, please note that these guidelines may be updated at any time.
         </p>
       </TutorialStep>
     </ol>

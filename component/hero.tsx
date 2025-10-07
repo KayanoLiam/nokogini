@@ -1,11 +1,20 @@
+"use client";
+
 import { NextLogo } from "./next-logo";
 import { SupabaseLogo } from "./supabase-logo";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function Hero() {
+  const router = useRouter();//这里的router是为了底部的get started按钮
+  const handleGetStarted = () => {
+    router.push("/auth/sign-up");
+  }
+
   return (
     <div className="flex flex-col gap-16 items-center">
       <div className="flex gap-8 justify-center items-center">
-        <a
+        {/* <a
           href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
           target="_blank"
           rel="noreferrer"
@@ -15,12 +24,14 @@ export function Hero() {
         <span className="border-l rotate-45 h-6" />
         <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
           <NextLogo />
-        </a>
+        </a> */}
+        <span className="text-4xl font-bold">SparkByte  NoKoGiNi</span>
       </div>
       <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
       <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
+        Chat here, or Join us.
+        {" "}
+        {/* <a
           href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
           target="_blank"
           className="font-bold hover:underline"
@@ -36,8 +47,13 @@ export function Hero() {
           rel="noreferrer"
         >
           Next.js
-        </a>
+        </a> */}
       </p>
+      <span>
+
+        <Button variant="outline" onClick={handleGetStarted}>Get Started</Button>
+
+      </span>
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
     </div>
   );
