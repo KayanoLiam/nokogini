@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 export function Hero() {
   const router = useRouter();//这里的router是为了底部的get started按钮
+  //点击按钮跳转到注册页面
   const handleGetStarted = () => {
     router.push("/auth/sign-up");
   }
