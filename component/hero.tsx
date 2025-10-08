@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export function Hero() {
-  const router = useRouter();//这里的router是为了底部的get started按钮
-  //点击按钮跳转到注册页面
+  const router = useRouter(); // Router used for the Get Started button
+  // Navigate to sign-up page when clicking the button
   const handleGetStarted = () => {
     router.push("/auth/sign-up");
   }

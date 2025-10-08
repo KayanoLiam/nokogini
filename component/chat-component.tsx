@@ -33,7 +33,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
     }
   };
 
-  // 只在组件挂载和发送消息时滚动到底部
+  // Only scroll to bottom on mount and after sending a message
   
   useEffect(() => {
     if (shouldScroll.current) {
@@ -42,7 +42,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
     }
   }, [messages]);
 
-  // 获取初始消息
+  // Fetch initial messages
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -52,7 +52,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
           .order("created_at", { ascending: true });
 
         if (error) throw error;
-        // 不再访问受限的 auth.users；仅对当前用户显示其邮箱
+        // Avoid querying restricted tables; only show email for current user
         const messagesWithUsers = (data || []).map((message) => ({
           ...message,
           user_email:
@@ -69,7 +69,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
     fetchMessages();
   }, [supabase, currentUserId, currentUserEmail]);
 
-  // 设置实时订阅
+  // Set up realtime subscription
   useEffect(() => {
     const channel = supabase
       .channel("public:messages")
@@ -82,7 +82,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
         },
         async (payload) => {
           console.log("New message received:", payload);
-          // 不尝试查询受限表，直接构造显示名称
+          // Do not query restricted table; construct display name directly
           const messageWithUser: Message = {
             ...(payload.new as Message),
             user_email:
@@ -104,7 +104,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        alert("请先登录");
+        alert("Please sign in first");
         return;
       }
 
@@ -118,12 +118,12 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
       if (error) throw error;
       
       setInputText('');
-      // 发送消息后滚动到底部
+      // After sending a message, scroll to bottom
       shouldScroll.current = true;
       
     } catch (error) {
       console.error("Error sending message:", error);
-      alert("发送消息失败，请重试");
+      alert("Failed to send message. Please try again.");
     }
   };
 
@@ -137,12 +137,12 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">加载消息中...</div>
+        <div className="text-gray-500">Loading messages...</div>
       </div>
     );
   }
 
-  // 将消息按日期分组用于分隔
+  // Group messages by date for separators
   const groupedByDate = messages.reduce((acc: Record<string, Message[]>, msg) => {
     const d = new Date(msg.created_at);
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -154,27 +154,27 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
 
   return (
     <div className="flex-1 w-full flex flex-col min-w-0">
-      {/* 消息列表（极简） */}
+      {/* Message list (minimal) */}
       <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-6 pb-24 space-y-6">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            还没有消息，快来发送第一条吧！
+            No messages yet. Send the first one!
           </div>
         ) : (
           dateKeys.map((dateKey) => (
             <div key={dateKey} className="space-y-4">
-              {/* 日期分隔线 */}
+              {/* Date separator */}
               <div className="flex items-center gap-3">
                 <div className="h-px flex-1 bg-border" />
                 <div className="text-xs text-muted-foreground">
-                  {new Date(dateKey).toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {new Date(dateKey).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </div>
                 <div className="h-px flex-1 bg-border" />
               </div>
 
               {groupedByDate[dateKey].map((message) => {
-                const time = new Date(message.created_at).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                const name = message.user_email || `用户-${message.user_id.slice(0, 8)}`;
+                const time = new Date(message.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                const name = message.user_email || `User-${message.user_id.slice(0, 8)}`;
                 return (
                   <div key={message.id} className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-lg">
@@ -195,21 +195,21 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
         )}
       </div>
 
-      {/* 输入区域（极简，始终可见） */}
+      {/* Input area (minimal, always visible) */}
       <div className="sticky bottom-0 z-10 border-t border-border px-4 py-3 bg-background">
         <div className="flex items-end gap-3">
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="输入消息..."
+            placeholder="Type a message..."
             rows={1}
             className="flex-1 px-4 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring resize-none"
             style={{ maxHeight: '120px' }}
           />
           <Button onClick={handleSend} disabled={!inputText.trim()} className="gap-2 flex-shrink-0">
             <Send className="w-5 h-5" />
-            发送
+            Send
           </Button>
         </div>
       </div>
