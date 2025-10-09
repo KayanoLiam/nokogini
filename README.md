@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo.png" alt="Organization Logo" width="140" />
+</p>
+
 # SparkByte NoKoGiNi
 
 ## Project Overview
@@ -172,5 +176,3 @@ It uses the latest **React 19** and **Next.js** features, including **Server Com
 * True real-time communication via **Supabase Realtime**
 * Responsive design for all devices
 * Light/Dark theme support
-
-The name **“NoKoGiNi”** may originate from a Japanese word or concept, while **“SparkByte”** serves as the branding prefix for this project.
