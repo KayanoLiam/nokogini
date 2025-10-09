@@ -10,15 +10,14 @@ interface Message {
   content: string;
   user_id: string;
   created_at: string;
-  user_email?: string;
+  display_name?: string;
 }
 
 interface ChatComponentProps {
   currentUserId?: string;
-  currentUserEmail?: string;
 }
 
-export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponentProps) {
+export function ChatComponent({ currentUserId }: ChatComponentProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -52,13 +51,24 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
           .order("created_at", { ascending: true });
 
         if (error) throw error;
-        // Avoid querying restricted tables; only show email for current user
-        const messagesWithUsers = (data || []).map((message) => ({
+        // Load nicknames from profiles table in one shot
+        const userIds = (data || []).map((m) => m.user_id);
+        const uniqueUserIds = Array.from(new Set(userIds));
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("id, nickname")
+          .in("id", uniqueUserIds);
+
+        const nicknameMap = new Map<string, string>();
+        (profiles || []).forEach((p: { id: string; nickname: string | null }) => {
+          if (p.nickname) nicknameMap.set(p.id, p.nickname);
+        });
+
+        const messagesWithNames = (data || []).map((message) => ({
           ...message,
-          user_email:
-            message.user_id === currentUserId ? (currentUserEmail ?? "You") : undefined,
+          display_name: nicknameMap.get(message.user_id) || `User-${message.user_id.slice(0, 8)}`,
         }));
-        setMessages(messagesWithUsers);
+        setMessages(messagesWithNames);
       } catch (error) {
         console.error("Error fetching messages:", error);
       } finally {
@@ -67,7 +77,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
     };
 
     fetchMessages();
-  }, [supabase, currentUserId, currentUserEmail]);
+  }, [supabase, currentUserId]);
 
   // Set up realtime subscription
   useEffect(() => {
@@ -82,13 +92,20 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
         },
         async (payload) => {
           console.log("New message received:", payload);
-          // Do not query restricted table; construct display name directly
-          const messageWithUser: Message = {
+          // Fetch nickname for the sender
+          let displayName = `User-${(payload.new as any).user_id.slice(0, 8)}`;
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("nickname")
+            .eq("id", (payload.new as any).user_id)
+            .single();
+          if (profile?.nickname) displayName = profile.nickname;
+
+          const messageWithName: Message = {
             ...(payload.new as Message),
-            user_email:
-              payload.new.user_id === currentUserId ? (currentUserEmail ?? "You") : undefined,
+            display_name: displayName,
           };
-          setMessages((currentMessages) => [...currentMessages, messageWithUser]);
+          setMessages((current) => [...current, messageWithName]);
         }
       )
       .subscribe();
@@ -96,7 +113,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, currentUserId, currentUserEmail]);
+  }, [supabase, currentUserId]);
 
   const handleSend = async () => {
     if (!inputText.trim()) return;
@@ -174,7 +191,7 @@ export function ChatComponent({ currentUserId, currentUserEmail }: ChatComponent
 
               {groupedByDate[dateKey].map((message) => {
                 const time = new Date(message.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                const name = message.user_email || `User-${message.user_id.slice(0, 8)}`;
+                const name = message.display_name || `User-${message.user_id.slice(0, 8)}`;
                 return (
                   <div key={message.id} className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-lg">
