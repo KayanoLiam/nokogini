@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Send } from 'lucide-react';
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import Avatar from "./avatar";
 
 interface Message {
   id: string;
@@ -11,6 +12,7 @@ interface Message {
   user_id: string;
   created_at: string;
   display_name?: string;
+  avatar_url?: string;
 }
 
 interface ChatComponentProps {
@@ -51,23 +53,30 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
           .order("created_at", { ascending: true });
 
         if (error) throw error;
-        // Load nicknames from profiles table in one shot
+        // Load nicknames and avatars from profiles table in one shot
         const userIds = (data || []).map((m) => m.user_id);
         const uniqueUserIds = Array.from(new Set(userIds));
         const { data: profiles } = await supabase
           .from("profiles")
-          .select("id, nickname")
+          .select("id, nickname, avatar_url")
           .in("id", uniqueUserIds);
 
-        const nicknameMap = new Map<string, string>();
-        (profiles || []).forEach((p: { id: string; nickname: string | null }) => {
-          if (p.nickname) nicknameMap.set(p.id, p.nickname);
+        const profileMap = new Map<string, { nickname?: string; avatar_url?: string }>();
+        (profiles || []).forEach((p: { id: string; nickname: string | null; avatar_url: string | null }) => {
+          profileMap.set(p.id, {
+            nickname: p.nickname || undefined,
+            avatar_url: p.avatar_url || undefined
+          });
         });
 
-        const messagesWithNames = (data || []).map((message) => ({
-          ...message,
-          display_name: nicknameMap.get(message.user_id) || `User-${message.user_id.slice(0, 8)}`,
-        }));
+        const messagesWithNames = (data || []).map((message) => {
+          const profile = profileMap.get(message.user_id);
+          return {
+            ...message,
+            display_name: profile?.nickname || `User-${message.user_id.slice(0, 8)}`,
+            avatar_url: profile?.avatar_url,
+          };
+        });
         setMessages(messagesWithNames);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -92,18 +101,21 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
         },
         async (payload) => {
           console.log("New message received:", payload);
-          // Fetch nickname for the sender
+          // Fetch nickname and avatar for the sender
           let displayName = `User-${(payload.new as any).user_id.slice(0, 8)}`;
+          let avatarUrl: string | undefined;
           const { data: profile } = await supabase
             .from("profiles")
-            .select("nickname")
+            .select("nickname, avatar_url")
             .eq("id", (payload.new as any).user_id)
             .single();
           if (profile?.nickname) displayName = profile.nickname;
+          if (profile?.avatar_url) avatarUrl = profile.avatar_url;
 
           const messageWithName: Message = {
             ...(payload.new as Message),
             display_name: displayName,
+            avatar_url: avatarUrl,
           };
           setMessages((current) => [...current, messageWithName]);
         }
@@ -194,9 +206,12 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
                 const name = message.display_name || `User-${message.user_id.slice(0, 8)}`;
                 return (
                   <div key={message.id} className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-lg">
-                      {name.charAt(0).toUpperCase()}
-                    </div>
+                    <Avatar
+                      src={message.avatar_url}
+                      alt={name}
+                      size="md"
+                      fallbackText={name}
+                    />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline gap-2">
                         <span className="font-medium text-foreground">{name}</span>

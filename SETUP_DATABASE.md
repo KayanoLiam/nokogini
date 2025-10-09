@@ -1,53 +1,49 @@
-# Database Setup Instructions
+# Database Setup Guide
 
-## Creating the profiles table
+This guide will help you set up the required database tables and storage for the user profile features (nickname and avatar).
 
-To make the nickname feature work properly, you need to create the `profiles` table in your Supabase database.
+To make the profile features work properly, you need to create the `profiles` table and set up avatar storage in your Supabase database.
 
-### Steps:
+## Steps
+
+### 1. Set up the Profiles Table
 
 1. Log in to your [Supabase Dashboard](https://app.supabase.com)
-2. Select your project
-3. Click "SQL Editor" in the left sidebar
-4. Copy and run the following SQL code:
+2. Navigate to your project
+3. Go to the SQL Editor
+4. Execute the following SQL script:
 
 ```sql
 -- Copy the content from supabase/profiles_table.sql file
--- Or run the following code directly:
-
--- Create profiles table for user nicknames
-CREATE TABLE IF NOT EXISTS profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  nickname TEXT,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
-);
-
--- Enable Row Level Security
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-
--- Allow anyone to read nicknames (no PII stored)
-CREATE POLICY "Profiles are readable by everyone" ON profiles
-  FOR SELECT USING (true);
-
--- Allow users to insert their own profile
-CREATE POLICY "Users can insert their own profile" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
-
--- Allow users to update their own profile
-CREATE POLICY "Users can update their own profile" ON profiles
-  FOR UPDATE USING (auth.uid() = id);
-
--- Optional index
-CREATE INDEX IF NOT EXISTS idx_profiles_updated_at ON profiles(updated_at DESC);
 ```
 
-5. Click the "Run" button to execute the SQL
+Or you can copy and paste the content from the `supabase/profiles_table.sql` file directly.
 
-### Verification
+### 2. Set up Avatar Storage
 
-After running the SQL, you should be able to:
-- Set nicknames on the `/profile` page
-- See nicknames instead of emails in chat
-- See nicknames in the top navigation bar
+1. In the same SQL Editor, execute the avatar storage setup:
 
-If you still have issues, please check the browser console for error messages.
+```sql
+-- Copy the content from supabase/avatars_storage.sql file
+```
+
+Or you can copy and paste the content from the `supabase/avatars_storage.sql` file directly.
+
+## Executing the SQL
+
+1. Copy the SQL content from `supabase/profiles_table.sql`
+2. Paste it into the SQL Editor in your Supabase dashboard
+3. Click "Run" to execute the script
+4. Copy the SQL content from `supabase/avatars_storage.sql`
+5. Paste it into the SQL Editor and run it as well
+
+## Verification
+
+After running both scripts, you should see:
+- A new `profiles` table in your database with `nickname` and `avatar_url` fields
+- Row Level Security (RLS) enabled on the table
+- Appropriate policies for reading and writing profiles
+- An `avatars` storage bucket in the Storage section
+- Storage policies allowing users to upload/manage their own avatars
+
+The profile features (nickname and avatar) should now work properly!

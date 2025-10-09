@@ -1,7 +1,8 @@
--- Create profiles table for user nicknames
+-- Create profiles table for user nicknames and avatars
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   nickname TEXT,
+  avatar_url TEXT,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
