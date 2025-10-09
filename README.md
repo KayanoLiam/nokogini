@@ -67,6 +67,16 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your_SUPABASE_ANON_KEY
 
 References: `nokogini:13-14`
 
+### Database Setup
+
+After setting up your Supabase project and environment variables, you need to create the required database tables:
+
+1. Go to your [Supabase Dashboard](https://app.supabase.com)
+2. Navigate to SQL Editor
+3. Run the SQL script from `supabase/profiles_table.sql` or see `SETUP_DATABASE.md` for detailed instructions
+
+This will create the `profiles` table needed for the nickname feature.
+
 ### Install Dependencies
 
 ```bash
