@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export function Hero() {
   const router = useRouter(); // Router used for the Get Started button
@@ -18,9 +19,25 @@ export function Hero() {
   }, []);
 
   // Navigate to sign-up page when clicking the button
-  const handleGetStarted = () => {
-    router.push("/auth/sign-up");
-  }
+  const handleGetStarted = async () => {
+    const supabase = createClient();
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // 用户已登录，跳转到受保护页面
+        router.push("/protected");
+      } else {
+        // 用户未登录，跳转到注册页面
+        router.push("/auth/sign-up");
+      }
+    } catch (error) {
+      console.error("Error checking user status:", error);
+      // 出错时默认跳转到注册页面
+      router.push("/auth/sign-up");
+    }
+  };
 
   // Determine which logo to use based on theme
   const getLogoSrc = () => {
