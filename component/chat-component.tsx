@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Send } from 'lucide-react';
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/component/ui/button";
+import { Button } from "@/components/ui/button";
 
 interface Message {
   id: string;

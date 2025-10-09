@@ -1,105 +1,166 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# SparkByte NoKoGiNi
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+## Project Overview
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+**SparkByte NoKoGiNi** is a real-time chat application built with **Next.js** and **Supabase**.
+It provides a complete **user authentication system** and **real-time messaging**, supporting multiple users chatting simultaneously.
+References: `nokogini:18-18`, `nokogini:29-29`.
 
-## Features
+## Key Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- component with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+### User Authentication System
 
-## Demo
+* User registration and login
+* Forgot password functionality
+* Password update feature
+* Secure authentication powered by **Supabase Auth**
+  References: `nokogini:8-11`
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+### Real-Time Chat Functionality
 
-## Deploy to Vercel
+* Instant message sending and receiving
+* Real-time synchronization using **Supabase Realtime**
+* Messages grouped by date
+* Auto-scrolling to the latest message
+* User avatars displayed in chat
+  References: `nokogini:74-94`
 
-Vercel deployment will guide you through creating a Supabase account and project.
+### UI Features
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+* Responsive design for both mobile and desktop
+* Light/Dark theme toggle
+* Modern interface built with **Radix UI** and **Tailwind CSS**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+component%2C+Server+component%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+## Tech Stack
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+### Frontend Framework
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+* **Next.js (latest)** — React framework with Turbopack support
+* **React 19** — UI library
+* **TypeScript** — Type-safe development
+  References: `nokogini:20-23`
 
-## Clone and run locally
+### UI Component Libraries
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+* **Tailwind CSS** — Utility-first CSS framework
+* **Radix UI** — Accessible UI components
+* **Lucide React** — Icon library
+* **next-themes** — Theme switching
+  References: `nokogini:10-19`
 
-2. Create a Next.js app using the Supabase Starter template npx command
+### Backend Services
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+* **Supabase** — Database, authentication, and realtime features
+* **@supabase/ssr** — Server-side rendering support
+  References: `nokogini:14-15`
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+## Quick Start
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+### Environment Variables
 
-3. Use `cd` to change into the app's directory
+Create a `.env.local` file in the project root and add:
 
-   ```bash
-   cd with-supabase-app
-   ```
+```
+NEXT_PUBLIC_SUPABASE_URL=your_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your_SUPABASE_ANON_KEY
+```
 
-4. Rename `.env.example` to `.env.local` and update the following:
+References: `nokogini:13-14`
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+### Install Dependencies
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
 
-5. You can now run the Next.js local development server:
+### Development Mode
 
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+The app will start at **[http://localhost:3000](http://localhost:3000)**.
+References: `nokogini:3-7`
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `component.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+### Build for Production
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+```bash
+npm run build
+npm run start
+```
 
-## Feedback and issues
+## Project Structure
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+```
+├── app/                    # Next.js App Router pages
+│   ├── auth/               # Authentication pages (login, register, etc.)
+│   ├── protected/          # Protected chat pages
+│   ├── layout.tsx          # Root layout
+│   └── page.tsx            # Homepage
+├── component/              # React components
+│   ├── chat-component.tsx  # Chat component
+│   ├── auth-button.tsx     # Authentication button
+│   ├── hero.tsx            # Hero section
+│   └── tutorial/           # Tutorial components
+├── components/ui/          # Base UI components
+├── lib/                    # Utility functions
+│   └── supabase/           # Supabase client configuration
+└── middleware.ts           # Session management middleware
+```
 
-## More Supabase examples
+References: `nokogini:1-6`
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+## Core Functionality
+
+### Session Management
+
+The app uses middleware to automatically manage user sessions and ensure persistent authentication.
+References: `nokogini:8-20`
+
+### Real-Time Message Synchronization
+
+Chat messages are synced in real-time using **Supabase Realtime**, which listens for database changes and pushes updates instantly.
+References: `nokogini:46-70`
+
+### Message Sending
+
+Messages can be sent by pressing **Enter** (use **Shift + Enter** for a new line).
+The chat automatically scrolls to the latest message.
+References: `nokogini:101-128`
+
+## Database Configuration
+
+In Supabase, create the following table:
+
+**`messages` table** — Stores chat messages
+
+* `id` (uuid, primary key)
+* `content` (text) — message content
+* `user_id` (uuid) — user ID
+* `created_at` (timestamp) — creation time
+
+Enable **Realtime** and configure appropriate **RLS (Row Level Security)** policies.
+
+## Notes
+
+This project is a **full-stack real-time chat application** demonstrating how to combine **Next.js 14+ App Router** and **Supabase** to build a modern web app.
+It uses the latest **React 19** and **Next.js** features, including **Server Components** and **Server Actions**.
+
+### Highlights
+
+* Type-safe development with **TypeScript**
+* Enhanced performance using **Server Components**
+* Complete authentication flow
+* True real-time communication via **Supabase Realtime**
+* Responsive design for all devices
+* Light/Dark theme support
+
+The name **“NoKoGiNi”** may originate from a Japanese word or concept, while **“SparkByte”** serves as the branding prefix for this project.

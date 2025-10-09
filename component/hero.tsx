@@ -26,7 +26,10 @@ export function Hero() {
         <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
           <NextLogo />
         </a> */}
-        <span className="text-4xl font-bold">SparkByte  NoKoGiNi</span>
+        {/* <span className="text-4xl font-bold">SparkByte  NoKoGiNi</span> */}
+        <span className="text-4xl font-bold">
+          <img src="/logo.png" alt="SparkByte Logo" className="inline-block mr-2 w-12 h-12"  />
+          SparkByte</span>
       </div>
       <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
       <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
