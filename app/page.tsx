@@ -17,7 +17,12 @@ export default function Home() {
             <div className="flex gap-5 items-center font-semibold">
               <Link href={"/"}>SparkByte NoKoGiNi</Link>
             </div>
-            {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
+            <div className="flex items-center gap-4">
+              {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
+              <Link href="/profile" className="text-sm underline text-foreground/80">
+                Profile
+              </Link>
+            </div>
           </div>
         </nav>
         <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">

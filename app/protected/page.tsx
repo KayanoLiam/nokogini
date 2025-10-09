@@ -15,10 +15,7 @@ export default async function ProtectedPage() {
   return (
     <div className="flex-1 w-full flex h-[calc(100vh-8rem)] md:h-[calc(100vh-9rem)]">
       <section className="flex-1 flex flex-col min-w-0">
-        <ChatComponent
-          currentUserId={currentUser.id}
-          currentUserEmail={currentUser.email}
-        />
+        <ChatComponent currentUserId={currentUser.id} />
       </section>
     </div>
   );
