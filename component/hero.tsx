@@ -4,13 +4,32 @@ import { NextLogo } from "./next-logo";
 import { SupabaseLogo } from "./supabase-logo";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export function Hero() {
   const router = useRouter(); // Router used for the Get Started button
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Navigate to sign-up page when clicking the button
   const handleGetStarted = () => {
     router.push("/auth/sign-up");
   }
+
+  // Determine which logo to use based on theme
+  const getLogoSrc = () => {
+    if (!mounted) return "/logo.png"; // Default logo during SSR
+    
+    // Use resolvedTheme to handle 'system' theme properly
+    const currentTheme = resolvedTheme || theme;
+    return currentTheme === "dark" ? "/logo_dark.jpg" : "/logo.png";
+  };
 
   return (
     <div className="flex flex-col gap-16 items-center">
@@ -28,7 +47,7 @@ export function Hero() {
         </a> */}
         {/* <span className="text-4xl font-bold">SparkByte  NoKoGiNi</span> */}
         <span className="text-4xl font-bold">
-          <img src="/logo.png" alt="SparkByte Logo" className="inline-block mr-2 w-12 h-12"  />
+          <img src={getLogoSrc()} alt="SparkByte Logo" className="inline-block mr-2 w-12 h-12"  />
           SparkByte</span>
       </div>
       <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
