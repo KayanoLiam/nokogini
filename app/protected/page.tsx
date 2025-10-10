@@ -13,8 +13,8 @@ export default async function ProtectedPage() {
   const currentUser = data.user;
 
   return (
-    <div className="flex-1 w-full flex h-[calc(100vh-8rem)] md:h-[calc(100vh-9rem)]">
-      <section className="flex-1 flex flex-col min-w-0">
+    <div className="flex-1 w-full flex justify-center h-[calc(100vh-8rem)] md:h-[calc(100vh-9rem)]">
+      <section className="flex flex-col min-w-0 w-full md:w-[60%]">
         <ChatComponent currentUserId={currentUser.id} />
       </section>
     </div>
