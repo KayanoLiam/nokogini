@@ -1,30 +1,30 @@
 # Banned Users Guide
 
-本指南说明如何封禁与解封用户，并介绍应用端行为。
+This guide explains how to ban and unban users and how the application behaves when a user is banned.
 
-## 前置条件
-- 数据库 `profiles` 表包含 `is_banned BOOLEAN DEFAULT FALSE` 字段。
-- 已应用最新 SQL（参考 `supabase/profiles_table.sql` 与 `supabase/messages_table.sql`）。
+## Prerequisites
+- The `profiles` table has an `is_banned BOOLEAN DEFAULT FALSE` column.
+- The latest SQL is applied (see `supabase/profiles_table.sql` and `supabase/messages_table.sql`).
 
-## 如何封禁用户
-- 方式一：在 Supabase Dashboard 的 SQL Editor 执行：
+## How to Ban a User
+- Option A: Use the Supabase SQL Editor and run:
 
 ```sql
--- 将 <USER_ID> 替换为用户的 auth.uid()
+-- Replace <USER_ID> with the user's auth.uid()
 UPDATE public.profiles
 SET is_banned = TRUE
 WHERE id = '<USER_ID>';
 ```
 
-- 方式二：在 Table Editor 打开 `profiles`，找到用户行，将 `is_banned` 勾选/设为 `TRUE` 并保存。
+- Option B: In Table Editor, open `profiles`, locate the user's row, set `is_banned` to `TRUE`, and save.
 
-### 生效范围
-- 中间件会在用户访问受保护页面时重定向到 `/banned`。
-- 聊天输入与发送会被禁用。
-- RLS 在 `messages` 表会阻止被封禁用户插入消息。
+### Effects
+- Middleware redirects banned users from protected routes to `/banned`.
+- Chat input and send are disabled.
+- Row Level Security (RLS) in the `messages` table prevents banned users from inserting messages.
 
-## 如何解封用户
-- 在 SQL Editor 执行：
+## How to Unban a User
+- Use the SQL Editor and run:
 
 ```sql
 UPDATE public.profiles
@@ -32,19 +32,19 @@ SET is_banned = FALSE
 WHERE id = '<USER_ID>';
 ```
 
-- 或在 Table Editor 将 `is_banned` 设为 `FALSE`。
+- Or set `is_banned` to `FALSE` in Table Editor.
 
-## 验证步骤
-1. 在 `profiles` 中将目标用户 `is_banned` 改为 TRUE。
-2. 打开应用，登录该用户：
-   - 跳转到 `/banned` 页面；
-   - 聊天输入框与发送按钮不可用；
-   - 向 `messages` 插入失败（被 RLS 拒绝）。
-3. 将 `is_banned` 改回 FALSE：
-   - 能正常访问受保护页面；
-   - 聊天输入与发送恢复正常。
+## Verification Steps
+1. In `profiles`, set the target user's `is_banned` to TRUE.
+2. Log in as that user and verify:
+   - Redirect to the `/banned` page.
+   - Chat input and send button are disabled.
+   - Attempting to insert into `messages` fails (denied by RLS).
+3. Set `is_banned` back to FALSE and verify:
+   - Protected routes are accessible.
+   - Chat input and send are enabled.
 
-## 注意事项
-- 如果没有看到跳转或禁用效果，检查部署是否更新到最新版本。
-- 若你在本地开发，确保 `.env` 和 Supabase 项目配置正确，且已运行最新 SQL 迁移。
-- 管理员/服务端也可以封禁：在你的管理面板或 API 中执行上述 `UPDATE` 语句即可。
+## Notes
+- If you don't see the redirect or disabled UI, ensure the latest deployment is live.
+- In local development, verify `.env` and Supabase project settings, and that the latest SQL migrations have been run.
+- Admin or server-side workflows can also perform bans by executing the `UPDATE` statement above within your admin panel or API.
