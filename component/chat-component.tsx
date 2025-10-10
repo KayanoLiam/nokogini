@@ -23,6 +23,7 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isBanned, setIsBanned] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const shouldScroll = useRef(true);
   const supabase = useMemo(() => createClient(), []);
@@ -47,6 +48,18 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
+        // Check banned status for current user
+        const { data: authData } = await supabase.auth.getUser();
+        const userId = authData?.user?.id;
+        if (userId) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("is_banned")
+            .eq("id", userId)
+            .single();
+          setIsBanned(!!profile?.is_banned);
+        }
+
         const { data, error } = await supabase
           .from("messages")
           .select("*")
@@ -129,6 +142,10 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
 
   const handleSend = async () => {
     if (!inputText.trim()) return;
+    if (isBanned) {
+      alert("You are banned and cannot send messages.");
+      return;
+    }
     
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -159,7 +176,9 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      if (!isBanned) {
+        handleSend();
+      }
     }
   };
 
@@ -238,8 +257,9 @@ export function ChatComponent({ currentUserId }: ChatComponentProps) {
             rows={1}
             className="flex-1 px-4 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring resize-none"
             style={{ maxHeight: '120px' }}
+            disabled={isBanned}
           />
-          <Button onClick={handleSend} disabled={!inputText.trim()} className="gap-2 flex-shrink-0">
+          <Button onClick={handleSend} disabled={isBanned || !inputText.trim()} className="gap-2 flex-shrink-0">
             <Send className="w-5 h-5" />
             Send
           </Button>
