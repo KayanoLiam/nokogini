@@ -47,3 +47,4 @@ After running both scripts, you should see:
 - Storage policies allowing users to upload/manage their own avatars
 
 The profile features (nickname and avatar) should now work properly!
+Note: The `profiles` table now includes an `is_banned BOOLEAN DEFAULT FALSE` field. Ensure you apply the latest SQL.
