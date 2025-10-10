@@ -59,6 +59,29 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // If user exists, check banned status via profiles table and redirect
+  if (
+    user &&
+    request.nextUrl.pathname !== "/" &&
+    !request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/banned")
+  ) {
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_banned")
+        .eq("id", (user as any).sub)
+        .single();
+      if (profile?.is_banned) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/banned";
+        return NextResponse.redirect(url);
+      }
+    } catch (e) {
+      // If profile fetch fails, do not block; allow normal flow
+    }
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
