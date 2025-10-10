@@ -176,3 +176,7 @@ It uses the latest **React 19** and **Next.js** features, including **Server Com
 * True real-time communication via **Supabase Realtime**
 * Responsive design for all devices
 * Light/Dark theme support
+
+## Admin Guides
+
+- 封禁/解封用户说明：参见 `BANNED_USERS.md`

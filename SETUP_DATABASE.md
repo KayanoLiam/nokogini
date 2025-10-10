@@ -48,3 +48,7 @@ After running both scripts, you should see:
 
 The profile features (nickname and avatar) should now work properly!
 Note: The `profiles` table now includes an `is_banned BOOLEAN DEFAULT FALSE` field. Ensure you apply the latest SQL.
+
+## Banned Users
+
+关于如何封禁/解封用户、以及应用端的行为说明，请参见 `BANNED_USERS.md`。
