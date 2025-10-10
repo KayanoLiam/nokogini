@@ -15,6 +15,7 @@ import { Label } from "@/component/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Github } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -43,6 +44,25 @@ export function LoginForm({
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    const supabase = createClient();
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+      // The browser will be redirected by Supabase; no further action needed.
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "An error occurred");
       setIsLoading(false);
     }
   };
@@ -103,6 +123,12 @@ export function LoginForm({
               </Link>
             </div>
           </form>
+          <div className="mt-4">
+            <Button type="button" variant="outline" className="w-full" onClick={handleGithubLogin} disabled={isLoading}>
+              <Github className="mr-2 h-4 w-4" />
+              Continue with GitHub
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
