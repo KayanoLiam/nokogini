@@ -16,8 +16,16 @@ CREATE POLICY "Messages are viewable by everyone" ON messages
   FOR SELECT USING (true);
 
 -- Allow users to insert their own messages
-CREATE POLICY "Users can insert their own messages" ON messages
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own messages if not banned" ON messages
+  FOR INSERT
+  WITH CHECK (
+    auth.uid() = user_id
+    AND (
+      SELECT COALESCE(NOT is_banned, TRUE)
+      FROM profiles
+      WHERE id = auth.uid()
+    )
+  );
 
 -- Allow users to update their own messages
 CREATE POLICY "Users can update their own messages" ON messages

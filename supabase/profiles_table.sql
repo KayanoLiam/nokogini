@@ -3,6 +3,8 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   nickname TEXT,
   avatar_url TEXT,
+  -- Banning flag to restrict user actions
+  is_banned BOOLEAN DEFAULT FALSE,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
