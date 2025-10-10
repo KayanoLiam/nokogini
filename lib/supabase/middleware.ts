@@ -45,11 +45,12 @@ export async function updateSession(request: NextRequest) {
   // IMPORTANT: If you remove getClaims() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
   const { data } = await supabase.auth.getClaims();
-  const user = data?.claims;
+  type JwtClaims = { sub?: string };
+  const userClaims = (data?.claims ?? null) as JwtClaims | null;
 
   if (
     request.nextUrl.pathname !== "/" &&
-    !user &&
+    !userClaims &&
     !request.nextUrl.pathname.startsWith("/login") &&
     !request.nextUrl.pathname.startsWith("/auth")
   ) {
@@ -61,24 +62,28 @@ export async function updateSession(request: NextRequest) {
 
   // If user exists, check banned status via profiles table and redirect
   if (
-    user &&
+    userClaims &&
     request.nextUrl.pathname !== "/" &&
     !request.nextUrl.pathname.startsWith("/auth") &&
     !request.nextUrl.pathname.startsWith("/banned")
   ) {
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_banned")
-        .eq("id", (user as any).sub)
-        .single();
-      if (profile?.is_banned) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/banned";
-        return NextResponse.redirect(url);
+      const userId = userClaims?.sub;
+      if (userId) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_banned")
+          .eq("id", userId)
+          .single();
+        if (profile?.is_banned) {
+          const url = request.nextUrl.clone();
+          url.pathname = "/banned";
+          return NextResponse.redirect(url);
+        }
       }
-    } catch (e) {
+    } catch (error) {
       // If profile fetch fails, do not block; allow normal flow
+      console.warn("profiles check failed in middleware", error);
     }
   }
 
