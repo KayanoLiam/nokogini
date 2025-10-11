@@ -90,7 +90,7 @@ export default async function NewsPage() {
   let usingFallback = false;
   try {
     commits = await fetchCommits();
-  } catch (err) {
+  } catch {
     commits = fallbackCommits;
     usingFallback = true;
   }
@@ -102,9 +102,9 @@ export default async function NewsPage() {
           <Button variant="outline" size="sm">Back to Home</Button>
         </Link>
       </div>
-      <h1 className="text-2xl font-bold mb-2">What's new</h1>
+      <h1 className="text-2xl font-bold mb-2">What&apos;s new</h1>
       <p className="text-gray-600 mb-6">
-        Latest updates sourced from the project's Git commit history.
+        Latest updates sourced from the project&apos;s Git commit history.
         {usingFallback && " (Temporary fallback shown due to API rate limits or network error.)"}
       </p>
 
