@@ -1,11 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  turbopack: {
-    // Ensure Turbopack resolves modules relative to this project root.
-    // Fixes warning about incorrect workspace root when multiple lockfiles exist.
-    root: "/Users/kayano/Desktop/nokogini_frontend",
-  },
+  // Use default Turbopack project root. The previous hardcoded `root`
+  // pointed outside the repository and caused path resolution to panic.
+  // If you need a custom root, ensure it matches the actual project folder.
+  turbopack: {},
   images: {
     remotePatterns: [
       {
