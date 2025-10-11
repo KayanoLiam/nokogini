@@ -9,17 +9,29 @@ type CommitItem = {
   };
 };
 
-async function fetchCommits(): Promise<CommitItem[]> {
-  const url =
-    "https://api.github.com/repos/KayanoLiam/nokogini/commits?per_page=12";
+type CommitList = { items: CommitItem[]; hasNext: boolean };
+
+async function fetchCommits(
+  page: number,
+  perPage: number,
+  token?: string
+): Promise<CommitList> {
+  const url = `https://api.github.com/repos/KayanoLiam/nokogini/commits?per_page=${perPage}&page=${page}`;
+  const headers: Record<string, string> = { Accept: "application/vnd.github+json" };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
   const res = await fetch(url, {
-    headers: { Accept: "application/vnd.github+json" },
+    headers,
     next: { revalidate: 1800 },
   });
   if (!res.ok) {
     throw new Error(`Failed to load commits: ${res.status}`);
   }
-  return res.json();
+  const items: CommitItem[] = await res.json();
+  const linkHeader = res.headers.get("link") || "";
+  const hasNext = /rel="next"/i.test(linkHeader);
+  return { items, hasNext };
 }
 
 const fallbackCommits: CommitItem[] = [
@@ -85,14 +97,28 @@ function formatDate(date: string) {
   }
 }
 
-export default async function NewsPage() {
+export default async function NewsPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const page = Number(
+    typeof searchParams?.page === "string" ? searchParams?.page : Array.isArray(searchParams?.page) ? searchParams?.page?.[0] : "1"
+  ) || 1;
+  const perPage = 20;
+  const token = process.env.GITHUB_TOKEN;
+
   let commits: CommitItem[] = [];
   let usingFallback = false;
+  let hasNext = false;
   try {
-    commits = await fetchCommits();
+    const list = await fetchCommits(page, perPage, token);
+    commits = list.items;
+    hasNext = list.hasNext;
   } catch {
     commits = fallbackCommits;
     usingFallback = true;
+    hasNext = false;
   }
 
   return (
@@ -103,6 +129,7 @@ export default async function NewsPage() {
         </Link>
       </div>
       <h1 className="text-2xl font-bold mb-2">What&apos;s new</h1>
+      <div className="text-sm text-gray-500 mb-2">Page {page}</div>
       <p className="text-gray-600 mb-6">
         Latest updates sourced from the project&apos;s Git commit history.
         {usingFallback && " (Temporary fallback shown due to API rate limits or network error.)"}
@@ -128,6 +155,18 @@ export default async function NewsPage() {
           </li>
         ))}
       </ul>
+      <div className="fixed bottom-4 right-4 z-10 flex items-center gap-2">
+        {page > 1 && (
+          <Link href={`/news?page=${page - 1}`}>
+            <Button variant="outline" size="sm">Previous</Button>
+          </Link>
+        )}
+        {hasNext && (
+          <Link href={`/news?page=${page + 1}`}>
+            <Button variant="outline" size="sm">Next</Button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 }
