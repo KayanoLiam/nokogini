@@ -7,6 +7,7 @@ import { SignUpUserSteps } from "@/component/tutorial/sign-up-user-steps";
 // import { hasEnvVars } from "@/lib/utils";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
+// Button no longer used in footer links
 
 export default function Home() {
   return (
@@ -39,12 +40,23 @@ export default function Home() {
             <a
               href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
               target="_blank"
-              className="font-bold hover:underline"
+              className="font-bold"
               rel="noreferrer"
             >
               SparkByte
             </a>
           </p>
+          <div className="flex items-center gap-3">
+            <Link href="/news" className="text-sm text-foreground/80">
+              What&apos;s new
+            </Link>
+            <Link href="/contact" className="text-sm text-foreground/80">
+              Contact Us
+            </Link>
+            <Link href="/qa" className="text-sm text-foreground/80">
+              Q&amp;A
+            </Link>
+          </div>
           <ThemeSwitcher />
         </footer>
       </div>
