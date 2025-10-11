@@ -100,10 +100,15 @@ function formatDate(date: string) {
 export default async function NewsPage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const params = await searchParams;
   const page = Number(
-    typeof searchParams?.page === "string" ? searchParams?.page : Array.isArray(searchParams?.page) ? searchParams?.page?.[0] : "1"
+    typeof params?.page === "string"
+      ? params?.page
+      : Array.isArray(params?.page)
+      ? params?.page?.[0]
+      : "1"
   ) || 1;
   const perPage = 20;
   const token = process.env.GITHUB_TOKEN;
