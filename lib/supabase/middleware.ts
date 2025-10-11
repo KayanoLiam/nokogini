@@ -20,10 +20,16 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY!,
     {
       cookies: {
-        getAll() {
+        getAll(): { name: string; value: string }[] {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(
+          cookiesToSet: {
+            name: string;
+            value: string;
+            options?: Record<string, unknown>;
+          }[],
+        ) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
@@ -81,7 +87,7 @@ export async function updateSession(request: NextRequest) {
           return NextResponse.redirect(url);
         }
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // If profile fetch fails, do not block; allow normal flow
       console.warn("profiles check failed in middleware", error);
     }
